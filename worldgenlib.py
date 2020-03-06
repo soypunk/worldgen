@@ -31,24 +31,27 @@ def atmo_gen(worldsize): #inputs world size number
 		worldatmo = 15
 	return worldatmo #outputs atmosphere number
 
-def hyd_gen(worldsize): #inputs world size number
+def hyd_gen(worldsize, worldatmo): #inputs world size and world atmosphere numbers
 	"""
 	generates the hydrographics number
 	"""
 	worldhyd=0
-	worldhyd=stellagama.dice(2,6) - 7 + worldsize
-	if worldsize == 0:
-		hyd=worldhyd - 4
-	if worldsize == 1:
-		hyd=worldhyd - 4
-	if worldsize >= 10:
-		hyd=worldhyd - 4
-	if worldsize == 0:
-		worldhyd = 0
-	if worldhyd < 0:
-		worldhyd = 0
+	
+	# If World Size is 0, 1 then worldsize remains 0
+	if worldsize not in [0,1]:
+		worldhyd=stellagama.dice(2,6) - 7 + worldsize
+
+		# If Atmosphere is 0,1,A,B,C then DM -4
+		if worldatmo in [0,1,10,11,12]:
+			worldhyd=worldhyd-4
+		# If Atmosphere is E then DM -2
+		if worldatmo == 13:
+			worldhyd=worldhyd-2
+					
+	# If worldhyd is higher than 10, cap it at 10
 	if worldhyd > 10:
-		worldhyd = 10
+		worldhyd=10
+	
 	return worldhyd #outputs hydrographics number
 
 def pop_gen (worldsize, worldatmo, worldhyd): #inputs world size, atmospehere, and hydrographics numbers
@@ -359,7 +362,7 @@ def uwp_gen():
 		"""
 		worldsize=size_gen() #generate world size
 		worldatmo=atmo_gen(worldsize) #generate world atmosphere
-		worldhyd=hyd_gen(worldsize) #generate world hydrographics
+		worldhyd=hyd_gen(worldsize, worldatmo) #generate world hydrographics
 		worldpop=pop_gen(worldsize, worldatmo, worldhyd) #generate world population
 		starport=starport_gen(worldpop) #generate world starport
 		worldgov=gov_gen(worldpop) #generate world government
